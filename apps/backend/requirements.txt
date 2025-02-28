@@ -1,0 +1,29 @@
+
+# asyncpg
+# aiohttp
+# authlib
+# fastapi-sessions
+
+# fastapi==0.104.1
+# uvicorn==0.23.2
+# sqlalchemy==2.0.22
+# psycopg2-binary==2.9.9
+# alembic==1.12.1
+# python-dotenv==1.0.0
+# strawberry-graphql==0.211.1
+# httpx==0.25.0
+# itsdangerous==2.1.2
+# python-jose==3.3.0
+# google-auth==2.23.3
+# google-auth-oauthlib==1.1.0
+
+
+fastapi
+uvicorn
+strawberry-graphql
+sqlalchemy
+asyncpg
+bcrypt
+python-dotenv
+pydantic
+greenlet

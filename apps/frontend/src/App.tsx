@@ -1,35 +1,64 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { Input } from "./components/ui/input";
+import { Button } from "./components/ui/button";
+import { Signup } from "./components/signup";
+import { Login } from "./components/login";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  CHECK_AUTH_QUERY,
+  CREATE_PORTFOLIO_MUTATION,
+  GET_PORTFOLIOS_QUERY,
+} from "./lib/apollo";
+import { Logout } from "./components/ui/logout";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const {
+    data: portfolios,
+    loading,
+    error,
+    refetch: refetchPortfolios,
+  } = useQuery(GET_PORTFOLIOS_QUERY);
+  const res = useQuery(CHECK_AUTH_QUERY);
+  const [createPortfolioMutation, { loading: createPortfolioLoadin }] =
+    useMutation(CREATE_PORTFOLIO_MUTATION);
+
+  const [jobsCount, setJobsCount] = useState();
+  const [roleName, setRoleName] = useState("");
+
+  const handleSubmit = async () => {
+    if (!jobsCount || !roleName.length) return;
+    const { data, errors, extensions } = await createPortfolioMutation({
+      variables: { roleName, jobsCount: parseInt(jobsCount) },
+    });
+    refetchPortfolios();
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="flex flex-col justify-center items-center h-screen gap-6">
+      <Logout />
+      <Signup />
+      <Login />
+      <div className="border border-border w-1/2 h-1/2 flex flex-col gap-3 p-4">
+        <Input
+          value={jobsCount}
+          onChange={(e) => setJobsCount(e.target.value)}
+          placeholder="job count..."
+        />
+        <Input
+          value={roleName}
+          onChange={(e) => setRoleName(e.target.value)}
+          placeholder="job title"
+        />
+        <Button onClick={handleSubmit}>Submit</Button>
+
+        <div className="flex flex-col border border-border h-full p-2 overflow-hidden">
+          <div className="flex-1 overflow-auto">
+            {JSON.stringify(portfolios)}
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
